@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- 页面头部内容 -->
+</head>
+<body>
+<div id="app">
+    <!-- Vue.js 组件将被动态加载到这里 -->
+    <input type="text" v-model="message"> <!-- 示例：使用Vue.js的双向绑定 -->
+    <p>{{ message }}</p> <!-- 示例：显示双向绑定的数据 -->
+    <button @click="printMessage">打印當前message</button>
+</div>
+
+<!-- 引入Vue.js -->
+<script src="/webjars/vue/2.6.11/dist/vue.min.js"></script>
+<script src="/webjars/axios/0.24.0/dist/axios.min.js"></script>
+
+<!-- 自定义的Vue.js逻辑 -->
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello, Vue.js!'
+        },
+        methods: {
+            printMessage() {
+                // 发送 AJAX 请求到控制器
+                axios.post('/print-message', {
+                    message: this.message
+                })
+                    .then(response => {
+                        console.log(response.data);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            }
+        }
+    });
+</script>
+</body>
+</html>
