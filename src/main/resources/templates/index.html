@@ -10,10 +10,17 @@
 <div id="app" class="container d-flex flex-column align-items-center">
     <!-- Vue.js 组件将被动态加载到这里 -->
     <div class="mb-3">
-        <input type="text" v-model="message" class="form-control mb-2">
-        <input type="text" v-model="token" class="form-control mb-2">
+        <label for="messageInput" class="form-label">Message:</label>
+        <input id="messageInput" type="text" v-model="message" class="form-control mb-2">
+        <label for="tokenInput" class="form-label">Token:</label>
+        <input id="tokenInput" type="text" v-model="token" class="form-control mb-2">
+        <label for="userNameInput" class="form-label">Username:</label>
+        <input id="userNameInput" type="text" v-model="userName" class="form-control mb-2">
+        <label for="passwordInput" class="form-label">Password:</label>
+        <input id="passwordInput" type="text" v-model="password" class="form-control mb-2">
         <p>{{ message }}</p> <!-- 示例：显示双向绑定的数据 -->
         <p>{{ messageAscii }}</p> <!-- 显示转换为 ASCII 的值 -->
+        <b-button variant="primary" @click="loginToGetCrpToken">登入crp取得token</b-button>
     </div>
 
     <ul>
@@ -26,7 +33,6 @@
         <b-button variant="success" @click="callCrpLoginKey" class="me-2">带token call crp test</b-button>
     </div>
 
-    <!-- Button with Bootstrap Vue's exclusive features -->
     <b-button variant="primary" @click="createItems" v-b-toggle.collapse-element class="mt-3">
         create items for v-for rendering
     </b-button>
@@ -49,6 +55,8 @@
             message: 'Hello, Vue.js!',
             token: 'token Here ...',
             items: [],
+            userName: '',
+            password: '',
         },
         computed: {
             messageAscii() {
@@ -96,6 +104,22 @@
                 this.items = [];
                 console.log('items deleted ...');
             },
+            loginToGetCrpToken() {
+                // 移除身份验证头部
+                delete axios.defaults.headers.common['Authorization'];
+                const params = {
+                    Account: this.userName,
+                    LoginKey: this.password,
+                    companyId: 'A0',
+                };
+                axios.post('http://localhost:8708/Account/Login', params).then(
+                    res => this.setUser(res)
+                );
+            },
+            setUser(user) {
+                console.log(user);
+                localStorage.setItem('user', JSON.stringify({"data": user.data.Result}));
+            }
         }
     });
 </script>
